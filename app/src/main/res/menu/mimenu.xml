@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/instrucciones"
+        android:icon="@color/colorPrimary"
+        android:title="@string/instrucciones"
+        />
+    <item
+        android:id="@+id/nuevo"
+        android:icon="@color/colorAccent"
+        android:title="@string/nuevo"/>
+    <item
+        android:id="@+id/configurar"
+        android:icon="@color/colorPrimaryDark"
+        android:title="@string/configurar"/>
+    <item
+        android:id="@+id/personaje"
+        android:icon="@mipmap/feliz"
+        android:title="@string/personaje"
+        android:visible="true"
+        app:showAsAction="ifRoom" />
+</menu>
