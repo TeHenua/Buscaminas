@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        boolean[][] tablero = generarTablero(8,10);
+        int[][] tablero = generarTablero(8,10);
         pintarTablero(tablero);
     }
 
@@ -29,32 +29,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onCreateOptionsMenu(menu);
     }
 
-    public boolean[][] generarTablero(int largo, int minas){
+    public int[][] generarTablero(int largo, int minas){
         int contador = 0;
-        boolean[][] tablero = new boolean[largo][largo];
-        boolean temp=false;
+        int[][] tablero = new int[largo][largo];
+        int temp=-2; //-uno es bomba, 0 es vacío y numeros bombas cercanas
         Random rand = new Random();
         for (int i=0;i<largo;i++) {
             for (int j = 0; j < largo; j++) {
                 if (rand.nextInt((5-1)+1)+1==5){
-                    temp=true;
+                    temp=-1;
                 }else{
-                    temp=false;
+                    temp=0;
                 }
-                if (contador<minas && temp){
+                if (contador<minas && temp==-1){
                     tablero[i][j]=temp;
                     contador++;
                 }else{
-                    tablero[i][j]=false;
+                    tablero[i][j]=0;
                 }
             }
         }
         return tablero;
     }
 
-    public void pintarTablero(boolean[][] tablero){
+    public void pintarTablero(int[][] tablero){
         GridLayout layout = (GridLayout)findViewById(R.id.layout);
-        generarTablero(8,10);
+        tablero = calcularCercanas(generarTablero(8,10));
         for (int i=0;i<tablero.length;i++){
             for (int j=0;j<tablero[i].length;j++){
                 ImageButton b = new ImageButton(this);
@@ -66,6 +66,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 layout.addView(b);
             }
         }
+    }
+
+    public int[][] calcularCercanas(int[][] tablero){
+        for (int i=0;i<tablero.length;i++){
+            for (int j=0;j<tablero[i].length;j++){
+                if (tablero[i][j]==0){
+                    //Primero comprobar si son -uno, si no sumar ++
+                    //Comprobar que existen esas celdas (esquinas)
+                    try{
+                        if (tablero[i-1][j-1]==-1){
+                            tablero[i][j]++;
+                        }
+                        if (tablero[i-1][j]==-1){
+                            tablero[i][j]++;
+                        }
+                        if (tablero[i-1][j+1]==-1){
+                            tablero[i][j]++;
+                        }
+                        if (tablero[i][j-1]==-1){
+                            tablero[i][j]++;
+                        }
+                        if (tablero[i][j+1]==-1){
+                            tablero[i][j]++;
+                        }
+                        if (tablero[i+1][j-1]==-1){
+                            tablero[i][j]++;
+                        }
+                        if (tablero[i+1][j]==-1){
+                            tablero[i][j]++;
+                        }
+                        if (tablero[i+1][j+1]==-1){
+                            tablero[i][j]++;
+                        }
+                    }catch (Exception e){
+                        System.out.print(tablero[i][j]);
+                    }
+
+                }
+            }
+        }
+
+        return tablero;
     }
 
     @Override
