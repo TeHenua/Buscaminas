@@ -1,14 +1,22 @@
 package com.example.tehenua.buscaminas;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.Random;
@@ -18,18 +26,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int[][] tablero;
     private GridLayout layout;
     private boolean continuarJuego;
-    private int largo=8;
-    private int minas=10;
+    private Dificultad dificultad;
+    //Tablero de 16 y 60 minas ancho de button 90.
+    //12 y 30 minas, ancho de 120
+    //8 y 10 minas, ancho de 180
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        nuevoJuego(largo,minas);
+        nuevoJuego();
     }
 
-    public void nuevoJuego(int largo, int minas){
-        generarTablero(largo, minas);
+    public void nuevoJuego(){
+        dificultad = new Dificultad();
+        generarTablero(dificultad);
         pintarTablero();
         calcularCercanas();
     }
@@ -40,19 +51,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onCreateOptionsMenu(menu);
     }
 
-    public void generarTablero(int largo, int minas) {
+    public void generarTablero(Dificultad dificultad) {
         int contador = 0;
-        tablero = new int[largo][largo];
+        tablero = new int[dificultad.largo][dificultad.largo];
         int temp = -2; //-uno es bomba, 0 es vacío y numeros bombas cercanas
         Random rand = new Random();
-        for (int i = 0; i < largo; i++) {
-            for (int j = 0; j < largo; j++) {
+        for (int i = 0; i < dificultad.largo; i++) {
+            for (int j = 0; j < dificultad.largo; j++) {
                 if (rand.nextInt((5 - 1) + 1) + 1 == 5) {
                     temp = -1;
                 } else {
                     temp = 0;
                 }
-                if (contador < minas && temp == -1) {
+                if (contador < dificultad.minas && temp == -1) {
                     tablero[i][j] = temp;
                     contador++;
                 } else {
@@ -65,11 +76,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void pintarTablero() {
         layout = (GridLayout) findViewById(R.id.layout);
+        layout.setColumnCount(dificultad.largo);
+        layout.setRowCount(dificultad.largo);
         for (int i = 0; i < tablero.length; i++) {
             for (int j = 0; j < tablero[i].length; j++) {
                 ImageButton b = new ImageButton(this);
                 String id = String.valueOf(i) + String.valueOf(j);
                 b.setId(Integer.parseInt(id));
+                b.setLayoutParams(new RelativeLayout.LayoutParams(180,180));
                 b.setImageResource(R.mipmap.cuadro);
                 b.setPadding(0, 0, 0, 0);
                 b.setOnClickListener(this);
@@ -283,8 +297,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (valor) {
             case -1:
                 b.setImageResource(R.mipmap.feliz);
-                minas--;
-                if (minas==0){
+                dificultad.minas--;
+                if (dificultad.minas==0){
                     juegoGanado();
                 }
                 break;
@@ -293,6 +307,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+        switch (id){
+            case R.id.personaje:
+
+                break;
+            case R.id.nuevo:
+                recreate();
+                break;
+            case R.id.configurar:
+                ConfigurarDialog cf = new ConfigurarDialog();
+
+                break;
+            case R.id.instrucciones:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.instrucciones);
+                builder.setMessage(R.string.instrucDetalle).setCancelable(false)
+                .setPositiveButton(R.string.entendido, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }
 
 
