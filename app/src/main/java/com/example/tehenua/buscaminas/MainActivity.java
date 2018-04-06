@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
+        System.out.print(tablero);
 
     }
 
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (tablero[i - 1][j - 1] == -1) {
                             tablero[i][j]++;
                         }
-                    } catch (Exception e) {}
+                    } catch (Exception e) { }
                     try {
                         if (tablero[i - 1][j] == -1) {
                             tablero[i][j]++;
@@ -142,86 +143,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
+        System.out.print("Hola");
     }
 
-    public int calcularId(int i,int j){
-        return Integer.parseInt(String.valueOf(i)+String.valueOf(j));
+    public Coordenada calcularCoord(ImageButton b){
+        int id = b.getId();
+        int i = id / 10;
+        int j = id % 10;
+        Coordenada c = new Coordenada(i,j);
+        return c;
     }
 
-    public void despejarTablero(int i,int j,ImageButton b){
+
+    public void despejarTablero(ImageButton b){
         b.setImageResource(R.mipmap.vacio);
-        int i2;
-        int j2;
-        try {
-            if (tablero[i - 1][j - 1] == 0) {
-                i2 = i-1;
-                j2 = j-1;
-                b = (ImageButton) findViewById(calcularId(i2,j2));
-                despejarTablero(i2,j2,b);
-            }
-        } catch (Exception e) {}
-        try {
-            if (tablero[i - 1][j] == 0) {
-                i2 = i-1;
-                j2 = j;
-                b = (ImageButton) findViewById(calcularId(i2,j2));
-                despejarTablero(i2,j2,b);
-            }
-        } catch (Exception e) {}
-        try {
-            if (tablero[i - 1][j + 1] == 0) {
-                i2=i-1;
-                j2=j+1;
-                b = (ImageButton) findViewById(calcularId(i2,j2));
-                despejarTablero(i2,j2,b);
-            }
-        } catch (Exception e) {}
-        try {
-            if (tablero[i][j - 1] == 0) {
-                i2=i;
-                j2=j-1;
-                b = (ImageButton) findViewById(calcularId(i2,j2));
-                despejarTablero(i2,j2,b);
-            }
-        } catch (Exception e) {}
-        try {
-            if (tablero[i][j + 1] == 0) {
-                i2=i;
-                j2=j+1;
-                b = (ImageButton) findViewById(calcularId(i2,j2));
-                despejarTablero(i2,j2,b);
-            }
-        } catch (Exception e) {}
-        try {
-            if (tablero[i + 1][j - 1] == 0) {
-                i2=i+1;
-                j2=j-1;
-                b = (ImageButton) findViewById(calcularId(i2,j2));
-                despejarTablero(i2,j2,b);
-            }
-        } catch (Exception e) {}
-        try {
-            if (tablero[i + 1][j] == 0) {
-                i2=i+1;
-                j2=j;
-                b = (ImageButton) findViewById(calcularId(i2,j2));
-                despejarTablero(i2,j2,b);
-            }
-        } catch (Exception e) {}
-        try {
-            if (tablero[i + 1][j + 1] == 0) {
-                i2=i+1;
-                j2=j+1;
-                b = (ImageButton) findViewById(calcularId(i2,j2));
-                despejarTablero(i2,j2,b);
-            }
-        } catch (Exception e) {}
+        Coordenada c = calcularCoord(b);
+        tablero[c.i][c.j]=9;
+        for (int i=c.i-1;i<=c.i+1;i++){
+            for (int j=c.j-1;j<=c.j+1;j++){
 
+                //Problemaaa
+                try{
+                    if (tablero[i][j]==0){
+                        ImageButton b2 = findViewById((i*10)+j);
+                        despejarTablero(b2);
+                    }
+                }catch (Exception e){
+                    continue;
+                }
+            }
+        }
     }
 
     public void juegoPerdido(){
         Toast.makeText(this,"Lo siento, has perdido.",Toast.LENGTH_LONG).show();
-        recreate();
+        //recreate();
     }
 
     public void juegoGanado(){
@@ -231,17 +187,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        System.out.print(tablero);
         String s = String.valueOf(view.getId());
         int i, j;
-        int contLetras = s.length();
-        if (contLetras == 1) { //J 0
-            j = 0;
-            i = Integer.parseInt(s);
-        } else {
-            int temp = Integer.parseInt(s);
-            j = temp / 10;
-            i = temp % 10;
-        }
+        i = Integer.parseInt(s)/10;
+        j = Integer.parseInt(s)%10;
         ImageButton b = (ImageButton) findViewById(Integer.parseInt(s));
         int valor = tablero[i][j];
         switch (valor) {
@@ -250,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 juegoPerdido();
                 break;
             case 0:
-                despejarTablero(i,j,b);
+                despejarTablero(b);
                 break;
             case 1:
                 b.setImageResource(R.mipmap.uno);
@@ -283,15 +233,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onLongClick(View view) {
         String s = String.valueOf(view.getId());
         int i, j;
-        int contLetras = s.length();
-        if (contLetras == 1) { //J 0
-            j = 0;
-            i = Integer.parseInt(s);
-        } else {
-            int temp = Integer.parseInt(s);
-            j = temp / 10;
-            i = temp % 10;
-        }
+        i = Integer.parseInt(s)/10;
+        j = Integer.parseInt(s)%10;
         ImageButton b = (ImageButton) findViewById(Integer.parseInt(s));
         int valor = tablero[i][j];
         switch (valor) {

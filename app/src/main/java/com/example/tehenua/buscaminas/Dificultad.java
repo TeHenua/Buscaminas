@@ -9,8 +9,8 @@ public class Dificultad {
     int minas;
 
     public Dificultad() {
-        this.largo = 8;
-        this.minas = 10;
+        this.largo = 12;
+        this.minas = 30;
     }
 
     public void setPrincipiante(){
