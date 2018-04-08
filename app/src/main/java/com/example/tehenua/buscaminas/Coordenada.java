@@ -4,6 +4,10 @@ public class Coordenada {
     int i;
     int j;
 
+
+    public Coordenada() {
+    }
+
     public Coordenada(int i, int j) {
         this.i = i;
         this.j = j;
